@@ -4,20 +4,11 @@ import { StyleSheet, TouchableOpacity } from 'react-native';
 export default class Card extends React.Component{
     constructor(props){
         super(props);
-        this.state = {color: "black", isHead: false};
-
-        this.handleClick = this.handleClick.bind(this);
-        this.cardStyle = this.cardStyle.bind(this);
     }
 
-    handleClick(){
-        this.setState((state)=>({isHead: !state.isHead}));
-        this.setState({color: "blue"});
-    }
-
-    cardStyle(){
+    cardStyle=()=>{
         return {
-            backgroundColor: this.state.color,
+            backgroundColor: this.props.color,
             width: 80,
             height: 80,
             margin: 5,
@@ -27,7 +18,7 @@ export default class Card extends React.Component{
 
     render(){
         return(
-        <TouchableOpacity style={this.cardStyle()} onPress={this.handleClick}></TouchableOpacity>
+        <TouchableOpacity style={this.cardStyle()} onPress={()=>this.props.onPress()}></TouchableOpacity>
         );
     }
 }
