@@ -1,6 +1,8 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 
+import Color from '../constants/Color.js'
+
 export default class Card extends React.Component{
     constructor(props){
         super(props);
@@ -8,7 +10,7 @@ export default class Card extends React.Component{
 
     cardStyle=()=>{
         return {
-            backgroundColor: this.props.color,
+            backgroundColor: (this.props.isMatched||this.props.showColor)?this.props.color:Color.default,
             width: 80,
             height: 80,
             margin: 5,

@@ -7,4 +7,5 @@ export default{
     color6: '#8C43E6',
     color7: '#02732A',
     color8: '#f9e8d0',
+    default: 'grey',
 }

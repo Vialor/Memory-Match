@@ -1,13 +1,13 @@
 import React from 'react';
 import Card from './Card.js';
 import Color from '../constants/Color.js'
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, Button } from 'react-native';
 
-const cardsList = [[Color.color1, false], [Color.color1, false],[Color.color2, false],[Color.color2, false], 
-[Color.color3, false],[Color.color3, false],[Color.color4, false],[Color.color4, false], 
-[Color.color5, false],[Color.color5, false],[Color.color6, false], [Color.color6, false], 
-[Color.color7, false], [Color.color7, false], [Color.color8, false], [Color.color8, false]];
-shuffleArray(cardsList);
+const cardsList = [[Color.color1, false, false],[Color.color1, false, false],[Color.color2, false, false],[Color.color2, false, false], 
+                [Color.color3, false, false],[Color.color3, false, false],[Color.color4, false, false],[Color.color4, false, false], 
+                [Color.color5, false, false],[Color.color5, false, false],[Color.color6, false, false],[Color.color6, false, false], 
+                [Color.color7, false, false],[Color.color7, false, false],[Color.color8, false, false],[Color.color8, false, false]];
+                // [[color, isMatched, showColor], [...], ...]
 
 export default class GameBoard extends React.Component{
     constructor(props){
@@ -15,22 +15,35 @@ export default class GameBoard extends React.Component{
         this.state = {
             chosenItem: null,
             step: 0,
-            time: 100,
-            cards: cardsList, // [[color, isMatched], [...], ...]
+            cards: shuffleArray(cardsList), // [[color, isMatched, showColor], [...], ...]
         }
 
     }
 
-    handlePress(i){
+    handlePress(i){ // what if I press an already matched card
         const chosenItem = this.state.chosenItem;
         const cards = this.state.cards;
         console.log(chosenItem);
         if (chosenItem==null) {
-            // do animation
-            this.setState({chosenItem: i});
+            cards[i][2] = true;
+            this.setState({
+                chosenItem: i,
+                cards: cards,
+            });
         } else if (i!=chosenItem){ // cannot store the same card again
-            // do something
-            this.setState({chosenItem: null});
+            cards[i][2] = true;
+            if (cards[i][0]==cards[chosenItem][0]){ // same color
+                cards[i][1] = true;
+                cards[chosenItem][1] = true;
+            } else{ // different color
+                // wait and do:
+                cards[i][2] = false;
+                cards[chosenItem][2] = false;
+            }
+            this.setState({
+                chosenItem: null,
+                cards: cards,
+            });
         }
     }
 
@@ -38,17 +51,28 @@ export default class GameBoard extends React.Component{
         return(
             <Card color={this.state.cards[i][0]} 
             isMatched={this.state.cards[i][1]} 
+            showColor={this.state.cards[i][2]}
             onPress={()=>this.handlePress(i)}/>
         )
     }
 
     render(){
         const step = this.state.step;
-        const time = this.state.time;
         return(
         <View style={styles.container}>
+        {checkWin(this.state.cards) &&
+        <>
+         <Text style={styles.text}>Congratulation! You Did It!</Text>
+         <Button title="Play Again" 
+         onPress={() => {this.setState({
+            chosenItem: null,
+            step: 0,
+            cards: shuffleArray(cardsList)});
+            }}
+         />
+        </>
+        }
         <Text style={styles.text}>Step: {step}</Text>
-        <Text style={styles.text}>Time: {time}</Text>
         <View style={styles.row}>
             {this.renderCard(0)}
             {this.renderCard(1)}
@@ -95,9 +119,18 @@ const styles = StyleSheet.create({
   });
 
 function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
+    let shuffledArr = JSON.parse(JSON.stringify(array)); // deep copy
+    for (let i = shuffledArr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+        [shuffledArr[i], shuffledArr[j]] = [shuffledArr[j], shuffledArr[i]];
     }
+    return shuffledArr;
+}
+
+function checkWin(cards){
+    for (let i=0; i<cards.length; i++){
+        if (!cards[i][1]) return false;
+    }
+    return true;
 }
 
