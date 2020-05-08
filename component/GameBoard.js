@@ -20,30 +20,38 @@ export default class GameBoard extends React.Component{
 
     }
 
-    handlePress(i){ // what if I press an already matched card
+    handlePress(i){ 
+
         const chosenItem = this.state.chosenItem;
         const cards = this.state.cards;
-        console.log(chosenItem);
-        if (chosenItem==null) {
+        if (cards[i][1]) return // i is already matched
+
+        if (chosenItem==null) { // choose the first card
             cards[i][2] = true;
             this.setState({
                 chosenItem: i,
                 cards: cards,
             });
-        } else if (i!=chosenItem){ // cannot store the same card again
+        } // choose the second card
+        else if (i!=chosenItem){ // cannot store the same card again
             cards[i][2] = true;
             if (cards[i][0]==cards[chosenItem][0]){ // same color
                 cards[i][1] = true;
                 cards[chosenItem][1] = true;
             } else{ // different color
-                // wait and do:
-                cards[i][2] = false;
-                cards[chosenItem][2] = false;
+                setTimeout(()=>{
+                    cards[i][2] = false;
+                    cards[chosenItem][2] = false;
+                    this.setState({
+                        cards: cards,
+                    });
+                }, 1000); // this is ugly. hope there is a better way to do it
             }
-            this.setState({
+            this.setState((prevState)=>({
+                step: prevState.step+1,
                 chosenItem: null,
                 cards: cards,
-            });
+            }));
         }
     }
 
