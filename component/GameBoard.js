@@ -1,35 +1,36 @@
 import React from 'react';
 import Card from './Card.js';
+import Color from '../constants/Color.js'
 import { StyleSheet, View, Text } from 'react-native';
+
+const cardsList = [[Color.color1, false], [Color.color1, false],[Color.color2, false],[Color.color2, false], 
+[Color.color3, false],[Color.color3, false],[Color.color4, false],[Color.color4, false], 
+[Color.color5, false],[Color.color5, false],[Color.color6, false], [Color.color6, false], 
+[Color.color7, false], [Color.color7, false], [Color.color8, false], [Color.color8, false]];
+shuffleArray(cardsList);
 
 export default class GameBoard extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            chosenItems: [],
+            chosenItem: null,
             step: 0,
             time: 100,
-            cards: [['orange', false], ['orange', false],['orange', false],['orange', false], 
-            ['orange', false],['orange', false],['orange', false],['orange', false], 
-            ['orange', false],['orange', false],['orange', false], ['orange', false], 
-            ['orange', false], ['orange', false], ['orange', false], ['orange', false]],
-            // random generated color and isMatched
+            cards: cardsList, // [[color, isMatched], [...], ...]
         }
 
     }
 
     handlePress(i){
-        const chosenItems = this.state.chosenItems
-        this.setState({chosenItems: chosenItems.concat([i])});
-        const chosenNum = chosenItems.length;
-        console.log(chosenNum);
-        if (chosenNum==1){
-            console.log("Store one item");
-        } else if (chosenNum==2){
-
-            this.setState({chosenItems: []});
-        } else{
-            console.log("Numbers of chosen items should be 1 or 2.");
+        const chosenItem = this.state.chosenItem;
+        const cards = this.state.cards;
+        console.log(chosenItem);
+        if (chosenItem==null) {
+            // do animation
+            this.setState({chosenItem: i});
+        } else if (i!=chosenItem){ // cannot store the same card again
+            // do something
+            this.setState({chosenItem: null});
         }
     }
 
@@ -92,3 +93,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
   });
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
